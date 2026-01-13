@@ -31,12 +31,6 @@ export default function Navbar() {
 
           {/* Desktop Navigation Links */}
           <div className="hidden md:flex items-center space-x-8">
-            <Link
-              href="/"
-              className="text-white hover:text-amber-100 transition-colors font-medium"
-            >
-              Home
-            </Link>
             {user ? (
               <>
                 <Link

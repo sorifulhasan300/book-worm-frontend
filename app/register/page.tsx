@@ -22,7 +22,7 @@ const registerSchema = yup.object().shape({
   password: yup
     .string()
     .required("Password is required")
-    .min(8, "Password must be at least 8 characters")
+    .min(6, "Password must be at least 6 characters")
     .matches(/[A-Z]/, "Password must contain at least one uppercase letter")
     .matches(/[a-z]/, "Password must contain at least one lowercase letter")
     .matches(/\d/, "Password must contain at least one number")
@@ -40,7 +40,6 @@ type RegisterFormData = {
 
 export default function RegisterPage() {
   const auth = useContext(AuthContext);
-  console.log(auth);
   const [showPassword, setShowPassword] = useState(false);
   const [photoFile, setPhotoFile] = useState<File | null>(null);
   const [loading, setLoading] = useState(false);
@@ -59,13 +58,13 @@ export default function RegisterPage() {
   const onSubmit = async (data: RegisterFormData) => {
     setLoading(true);
     try {
-      if (!photoFile)
-        return showError("Image Required", "Please select a profile photo");
-      const imageUrl = await uploadImage(photoFile);
-      console.log(imageUrl);
-      if (!imageUrl) return;
-      if (!auth) throw new Error("Auth unavailable");
-      await auth.register(data.name, data.email, data.password, imageUrl);
+      // if (!photoFile)
+      //   return showError("Image Required", "Please select a profile photo");
+      // const imageUrl = await uploadImage(photoFile);
+      // console.log(imageUrl);
+      // if (!imageUrl) return;
+      // if (!auth) throw new Error("Auth unavailable");
+      await auth?.register(data.name, data.email, data.password, "");
       router.push("/my-library");
     } catch (err) {
       showError(

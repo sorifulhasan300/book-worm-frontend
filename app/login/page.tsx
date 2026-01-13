@@ -44,7 +44,12 @@ export default function LoginPage() {
     try {
       if (!auth) throw new Error("Auth unavailable");
       await auth.login(data.email, data.password);
-      router.push("/");
+      // Redirect based on user role
+      if (auth.user?.role === "admin") {
+        router.push("/admin/dashboard");
+      } else {
+        router.push("/my-library");
+      }
     } catch (err) {
       showError(
         "Login Failed",
