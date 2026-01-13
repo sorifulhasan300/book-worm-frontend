@@ -4,10 +4,10 @@ import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
-import { AuthContext } from "../context/AuthContext";
 import { BookOpen, Mail, Lock, Eye, EyeOff, User, Camera } from "lucide-react";
-import { useImageUpload } from "../hook/useImageUpload";
-import { showError } from "../lib/sweetalert";
+import { showError } from "@/app/lib/sweetalert";
+import { useImageUpload } from "@/app/hook/useImageUpload";
+import { AuthContext } from "@/app/context/AuthContext";
 
 // Validation schema
 const registerSchema = yup.object().shape({
