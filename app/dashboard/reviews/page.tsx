@@ -35,8 +35,7 @@ export default function ModerateReviewsPage() {
 
   const fetchReviews = async () => {
     try {
-      const status = filter === "all" ? "" : `?status=${filter}`;
-      const response = await api.get(`/admin/reviews${status}`);
+      const response = await api.get(`/review/all`);
       setReviews(response.data);
     } catch (error) {
       console.error("Error fetching reviews:", error);
@@ -50,16 +49,19 @@ export default function ModerateReviewsPage() {
     action: "approve" | "reject"
   ) => {
     try {
-      await api.put(`/admin/reviews/${reviewId}`, {
-        status: action === "approve" ? "approved" : "rejected",
-      });
+      if (action === "approve") {
+        await api.patch(`/review/${reviewId}/approve`);
+      } else {
+        // Assuming reject endpoint is similar
+        await api.patch(`/review/${reviewId}/reject`);
+      }
       fetchReviews();
     } catch (error) {
       console.error("Error moderating review:", error);
     }
   };
 
-  const filteredReviews = reviews.filter((review) => {
+  const filteredReviews = (reviews || []).filter((review) => {
     if (filter === "all") return true;
     return review.status === filter;
   });
@@ -81,7 +83,8 @@ export default function ModerateReviewsPage() {
                     : "bg-gray-200 text-gray-700 hover:bg-gray-300"
                 }`}
               >
-                Pending ({reviews.filter((r) => r.status === "pending").length})
+                Pending (
+                {(reviews || []).filter((r) => r.status === "pending").length})
               </button>
               <button
                 onClick={() => setFilter("approved")}
@@ -92,7 +95,7 @@ export default function ModerateReviewsPage() {
                 }`}
               >
                 Approved (
-                {reviews.filter((r) => r.status === "approved").length})
+                {(reviews || []).filter((r) => r.status === "approved").length})
               </button>
               <button
                 onClick={() => setFilter("all")}
@@ -102,7 +105,7 @@ export default function ModerateReviewsPage() {
                     : "bg-gray-200 text-gray-700 hover:bg-gray-300"
                 }`}
               >
-                All ({reviews.length})
+                All ({(reviews || []).length})
               </button>
             </div>
           </div>
@@ -139,7 +142,7 @@ export default function ModerateReviewsPage() {
                     </tr>
                   </thead>
                   <tbody className="bg-white divide-y divide-gray-200">
-                    {filteredReviews.map((review) => (
+                    {filteredReviews?.map((review) => (
                       <tr key={review._id} className="hover:bg-gray-50">
                         <td className="px-6 py-4">
                           <div className="max-w-xs truncate text-sm text-gray-900">
@@ -148,10 +151,10 @@ export default function ModerateReviewsPage() {
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
                           <div className="text-sm font-medium text-gray-900">
-                            {review.bookId.title}
+                            {review.bookId?.title}
                           </div>
                           <div className="text-sm text-gray-500">
-                            by {review.bookId.author}
+                            by {review.bookId?.author}
                           </div>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">

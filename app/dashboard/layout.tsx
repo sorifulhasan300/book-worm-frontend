@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "../globals.css";
 import { AuthProvider } from "../context/AuthContext";
+import AdminSidebar from "./components/AdminSidebar";
 
 export const metadata: Metadata = {
   title: "BookWorm Admin - Dashboard",
@@ -13,10 +14,14 @@ export default function AdminLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body className="antialiased">
-        <AuthProvider>{children}</AuthProvider>
-      </body>
-    </html>
+    <AuthProvider>
+      <div className="flex min-h-screen bg-gray-100">
+        {/* Sidebar */}
+        <AdminSidebar />
+
+        {/* Main content */}
+        <main className="flex-1 p-6">{children}</main>
+      </div>
+    </AuthProvider>
   );
 }

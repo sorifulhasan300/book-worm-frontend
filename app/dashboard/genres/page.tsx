@@ -78,72 +78,9 @@ export default function ManageGenresPage() {
     setShowAddForm(true);
   };
 
-  const sidebarItems = [
-    {
-      title: "Dashboard",
-      href: "/admin/dashboard",
-      icon: LayoutDashboard,
-    },
-    {
-      title: "Manage Books",
-      href: "/admin/books",
-      icon: BookOpen,
-    },
-    {
-      title: "Manage Genres",
-      href: "/admin/genres",
-      icon: Settings,
-    },
-    {
-      title: "Manage Users",
-      href: "/admin/users",
-      icon: Users,
-    },
-    {
-      title: "Moderate Reviews",
-      href: "/admin/reviews",
-      icon: MessageSquare,
-    },
-    {
-      title: "Manage Tutorials",
-      href: "/admin/tutorials",
-      icon: BarChart3,
-    },
-  ];
-
   return (
     <ProtectedRoute requiredRole="admin">
       <div className="min-h-screen bg-gray-100 flex">
-        {/* Sidebar */}
-        <div className="w-64 bg-white shadow-lg">
-          <div className="p-6">
-            <h2 className="text-2xl font-bold text-gray-800">Admin Panel</h2>
-          </div>
-          <nav className="mt-6">
-            <div className="px-3">
-              {sidebarItems.map((item) => (
-                <Link
-                  key={item.href}
-                  href={item.href}
-                  className="flex items-center px-3 py-3 rounded-lg text-sm font-medium transition-colors text-gray-600 hover:bg-gray-100 hover:text-gray-900"
-                >
-                  <item.icon className="w-5 h-5 mr-3" />
-                  {item.title}
-                </Link>
-              ))}
-            </div>
-          </nav>
-          <div className="absolute bottom-0 w-64 p-4">
-            <Link
-              href="/"
-              className="flex items-center px-3 py-2 text-sm font-medium text-gray-600 hover:bg-gray-100 hover:text-gray-900 rounded-lg transition-colors"
-            >
-              <LogOut className="w-5 h-5 mr-3" />
-              Back to Site
-            </Link>
-          </div>
-        </div>
-
         {/* Main Content */}
         <div className="flex-1 p-8">
           <div className="max-w-7xl mx-auto">
@@ -185,22 +122,7 @@ export default function ManageGenresPage() {
                       required
                     />
                   </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Description
-                    </label>
-                    <textarea
-                      value={formData.description}
-                      onChange={(e) =>
-                        setFormData({
-                          ...formData,
-                          description: e.target.value,
-                        })
-                      }
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-transparent"
-                      rows={3}
-                    />
-                  </div>
+
                   <div className="flex gap-2">
                     <button
                       type="submit"

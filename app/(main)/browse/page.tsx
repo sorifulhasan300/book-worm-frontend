@@ -1,8 +1,6 @@
 "use client";
 import React, { useState, useEffect, useContext } from "react";
 import Link from "next/link";
-import { AuthContext } from "../context/AuthContext";
-import api from "../lib/axios";
 import {
   Search,
   Filter,
@@ -16,6 +14,8 @@ import {
   Plus,
   Loader2,
 } from "lucide-react";
+import { AuthContext } from "@/app/context/AuthContext";
+import api from "@/app/lib/axios";
 
 interface Book {
   id: string;
@@ -78,7 +78,8 @@ export default function BrowseBooksPage() {
       const response = await api.get("/admin/books");
       console.log(response.data);
       const transformedBooks = response.data.map((book: RawBook) => {
-        const genre = typeof book.genre === "string" ? book.genre : book.genre.name;
+        const genre =
+          typeof book.genre === "string" ? book.genre : book.genre.name;
         return {
           id: book._id,
           title: book.title,

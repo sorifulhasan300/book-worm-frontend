@@ -20,8 +20,8 @@ import {
 interface Book {
   _id: string;
   title: string;
-  author: string;
-  genre: string;
+  author: string | { _id: string; name: string; __v: number };
+  genre: string | { _id: string; name: string; __v: number };
   description: string;
   cover_image?: string;
   published_year?: number;
@@ -66,7 +66,9 @@ export default function ManageBooksPage() {
   const filteredBooks = books.filter(
     (book) =>
       book.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      book.author.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      (typeof book.author === "string" ? book.author : book.author.name)
+        .toLowerCase()
+        .includes(searchTerm.toLowerCase()) ||
       book.isbn?.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
@@ -151,10 +153,14 @@ export default function ManageBooksPage() {
                           </div>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                          {book.author}
+                          {typeof book.author === "string"
+                            ? book.author
+                            : book.author.name}
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                          {book.genre}
+                          {typeof book.genre === "string"
+                            ? book.genre
+                            : book.genre?.name}
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                           {book.rating

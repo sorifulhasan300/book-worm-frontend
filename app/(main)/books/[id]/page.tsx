@@ -2,8 +2,7 @@
 import React, { useState, useEffect, useContext } from "react";
 import { useParams } from "next/navigation";
 import Link from "next/link";
-import { AuthContext } from "../../context/AuthContext";
-import api from "../../lib/axios";
+
 import {
   BookOpen,
   Star,
@@ -18,7 +17,9 @@ import {
   Send,
   ChevronDown,
 } from "lucide-react";
-import { showError } from "../../lib/sweetalert";
+import { AuthContext } from "@/app/context/AuthContext";
+import api from "@/app/lib/axios";
+import { showError } from "@/app/lib/sweetalert";
 interface Book {
   id: string;
   title: string;

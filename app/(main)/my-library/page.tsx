@@ -1,6 +1,6 @@
 "use client";
+import ProtectedRoute from "@/app/components/ProtectedRoute";
 import React from "react";
-import ProtectedRoute from "../components/ProtectedRoute";
 
 export default function MyLibraryPage() {
   return (

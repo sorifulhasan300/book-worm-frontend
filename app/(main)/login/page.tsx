@@ -4,9 +4,9 @@ import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
-import { AuthContext } from "../context/AuthContext";
 import { BookOpen, Mail, Lock, Eye, EyeOff } from "lucide-react";
-import { showError } from "../lib/sweetalert";
+import { AuthContext } from "@/app/context/AuthContext";
+import { showError } from "@/app/lib/sweetalert";
 
 // Validation schema
 const loginSchema = yup.object().shape({
