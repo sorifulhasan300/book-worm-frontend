@@ -21,7 +21,7 @@ export default function LoginPage() {
     try {
       if (!auth) throw new Error("Auth unavailable");
       await auth.login(email, password);
-      router.push("/my-library");
+      router.push("/");
     } catch (err) {
       setError((err as Error).message || "Login failed");
     } finally {
@@ -153,7 +153,7 @@ export default function LoginPage() {
 
               {/* Submit button */}
               <button
-                onClick={(e: any) => handleSubmit(e)}
+                onClick={(e) => handleSubmit(e)}
                 disabled={loading}
                 className="w-full bg-gradient-to-r from-amber-600 to-orange-600 text-white font-semibold py-3 px-4 rounded-lg hover:from-amber-700 hover:to-orange-700 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
               >

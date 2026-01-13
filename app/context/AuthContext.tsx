@@ -1,5 +1,11 @@
 "use client";
-import { createContext, useState, ReactNode } from "react";
+import {
+  createContext,
+  useState,
+  ReactNode,
+  useEffect,
+  useCallback,
+} from "react";
 import api from "../lib/axios";
 
 interface User {
@@ -15,6 +21,7 @@ interface AuthContextType {
   token: string | null;
   login: (email: string, password: string) => Promise<void>;
   logout: () => void;
+  loading: boolean;
   register: (
     name: string,
     email: string,
@@ -52,6 +59,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     if (typeof window === "undefined") return null;
     return getCookie("token");
   });
+  const [loading, setLoading] = useState(true);
 
   const login = async (email: string, password: string) => {
     const res = await api.post("/auth/login", { email, password });
@@ -77,14 +85,35 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     setCookie("token", res.data.token);
   };
 
-  const logout = () => {
+  const logout = useCallback(() => {
     setUser(null);
     setToken(null);
     deleteCookie("token");
-  };
+  }, []);
+
+  useEffect(() => {
+    if (!token) {
+      setLoading(false);
+      return;
+    }
+
+    const loadUser = async () => {
+      try {
+        const res = await api.get("/auth/me", {});
+        setUser(res.data.user);
+      } catch (err) {
+        logout();
+      } finally {
+        setLoading(false);
+      }
+    };
+    loadUser();
+  }, [token, logout]);
   console.log(user);
   return (
-    <AuthContext.Provider value={{ user, token, login, logout, register }}>
+    <AuthContext.Provider
+      value={{ user, token, loading, login, logout, register }}
+    >
       {children}
     </AuthContext.Provider>
   );
