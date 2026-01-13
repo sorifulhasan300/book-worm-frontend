@@ -1,16 +1,23 @@
-# TODO: Implement Protected Routes and Redirect Logic
+- [x] Book Details page (/books/[id])
+  - [x] Detailed view with reviews display
+  - [x] Add to shelf functionality (dropdown with Want to Read, Currently Reading, Read)
+  - [x] Write review functionality (rating and text review)
+- [ ] # My Library with 3 shelves (Want to Read, Currently Reading, Read)
 
 ## Completed Tasks
 
-- [x] Create ProtectedRoute component (app/components/ProtectedRoute.tsx)
-- [x] Create My Library page (app/my-library/page.tsx)
-- [x] Create Admin Dashboard page (app/admin/dashboard/page.tsx)
-- [x] Update login page redirect logic (app/login/page.tsx)
-- [x] Test the application - TypeScript compilation successful, no errors
-- [x] Verify code structure and imports are correct
+- [x] Admin Dashboard Routes
+  - [x] Dashboard: Overview stats (total books, users, pending reviews)
+  - [x] Manage Books: View, add, edit, delete books (/admin/books)
+  - [x] Manage Genres: Add/edit genres (/admin/genres)
+  - [x] Manage Users: View and change roles (/admin/users)
+  - [x] Moderate Reviews: Approve/delete pending reviews (/admin/reviews)
+  - [x] Manage Tutorials: Add/embed YouTube links (/admin/tutorials)
 
-## Next Steps
+## Next Steps - Book Management Features
 
-- [ ] Manual testing: Login as user → redirect to /my-library
-- [ ] Manual testing: Login as admin → redirect to /admin/dashboard
-- [ ] Manual testing: Access protected routes without auth → redirect to /login
+- [x] Book Details page (/books/[id])
+  - [x] Detailed view with reviews display
+  - [x] Add to shelf functionality (dropdown with Want to Read, Currently Reading, Read)
+  - [x] Write review functionality (rating and text review)
+- [ ] My Library with 3 shelves (Want to Read, Currently Reading, Read)
