@@ -1,24 +1,49 @@
 "use client";
 import React, { useState, useContext } from "react";
 import { useRouter } from "next/navigation";
+import { useForm } from "react-hook-form";
+import { yupResolver } from "@hookform/resolvers/yup";
+import * as yup from "yup";
 import { AuthContext } from "../context/AuthContext";
 import { BookOpen, Mail, Lock, Eye, EyeOff } from "lucide-react";
 import { showError } from "../lib/sweetalert";
 
+// Validation schema
+const loginSchema = yup.object().shape({
+  email: yup
+    .string()
+    .required("Email is required")
+    .email("Please enter a valid email address"),
+  password: yup
+    .string()
+    .required("Password is required")
+    .min(1, "Password is required"),
+});
+
+type LoginFormData = {
+  email: string;
+  password: string;
+};
+
 export default function LoginPage() {
   const auth = useContext(AuthContext);
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const router = useRouter();
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<LoginFormData>({
+    resolver: yupResolver(loginSchema),
+  });
+
+  const onSubmit = async (data: LoginFormData) => {
     setLoading(true);
     try {
       if (!auth) throw new Error("Auth unavailable");
-      await auth.login(email, password);
+      await auth.login(data.email, data.password);
       router.push("/");
     } catch (err) {
       showError(
@@ -65,7 +90,7 @@ export default function LoginPage() {
 
           {/* Form section */}
           <div className="p-8">
-            <form onSubmit={handleSubmit}>
+            <form onSubmit={handleSubmit(onSubmit)}>
               <div className="space-y-6">
                 {/* Email input */}
                 <div>
@@ -78,13 +103,18 @@ export default function LoginPage() {
                     </div>
                     <input
                       type="email"
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
-                      required
-                      className="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-transparent transition-all duration-200 bg-gray-50 focus:bg-white"
+                      {...register("email")}
+                      className={`block w-full pl-10 pr-3 py-3 border rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-transparent transition-all duration-200 bg-gray-50 focus:bg-white ${
+                        errors.email ? "border-red-500" : "border-gray-300"
+                      }`}
                       placeholder="your@email.com"
                     />
                   </div>
+                  {errors.email && (
+                    <p className="mt-1 text-sm text-red-600">
+                      {errors.email.message}
+                    </p>
+                  )}
                 </div>
 
                 {/* Password input */}
@@ -98,10 +128,10 @@ export default function LoginPage() {
                     </div>
                     <input
                       type={showPassword ? "text" : "password"}
-                      value={password}
-                      onChange={(e) => setPassword(e.target.value)}
-                      required
-                      className="block w-full pl-10 pr-12 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-transparent transition-all duration-200 bg-gray-50 focus:bg-white"
+                      {...register("password")}
+                      className={`block w-full pl-10 pr-12 py-3 border rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-transparent transition-all duration-200 bg-gray-50 focus:bg-white ${
+                        errors.password ? "border-red-500" : "border-gray-300"
+                      }`}
                       placeholder="Enter your password"
                     />
                     <button
@@ -116,6 +146,11 @@ export default function LoginPage() {
                       )}
                     </button>
                   </div>
+                  {errors.password && (
+                    <p className="mt-1 text-sm text-red-600">
+                      {errors.password.message}
+                    </p>
+                  )}
                 </div>
 
                 {/* Remember me & Forgot password */}

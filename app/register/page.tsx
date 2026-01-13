@@ -1,26 +1,62 @@
 "use client";
 import React, { useState, useContext } from "react";
 import { useRouter } from "next/navigation";
+import { useForm } from "react-hook-form";
+import { yupResolver } from "@hookform/resolvers/yup";
+import * as yup from "yup";
 import { AuthContext } from "../context/AuthContext";
 import { BookOpen, Mail, Lock, Eye, EyeOff, User, Camera } from "lucide-react";
 import { useImageUpload } from "../hook/useImageUpload";
 import { showError } from "../lib/sweetalert";
 
+// Validation schema
+const registerSchema = yup.object().shape({
+  name: yup
+    .string()
+    .required("Full name is required")
+    .min(2, "Name must be at least 2 characters"),
+  email: yup
+    .string()
+    .required("Email is required")
+    .email("Please enter a valid email address"),
+  password: yup
+    .string()
+    .required("Password is required")
+    .min(8, "Password must be at least 8 characters")
+    .matches(/[A-Z]/, "Password must contain at least one uppercase letter")
+    .matches(/[a-z]/, "Password must contain at least one lowercase letter")
+    .matches(/\d/, "Password must contain at least one number")
+    .matches(
+      /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/,
+      "Password must contain at least one special character"
+    ),
+});
+
+type RegisterFormData = {
+  name: string;
+  email: string;
+  password: string;
+};
+
 export default function RegisterPage() {
   const auth = useContext(AuthContext);
   console.log(auth);
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [photoFile, setPhotoFile] = useState<File | null>(null);
   const [loading, setLoading] = useState(false);
   const router = useRouter();
   const { uploadImage } = useImageUpload();
 
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<RegisterFormData>({
+    resolver: yupResolver(registerSchema),
+  });
+
   // register function
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
+  const onSubmit = async (data: RegisterFormData) => {
     setLoading(true);
     try {
       if (!photoFile)
@@ -29,7 +65,7 @@ export default function RegisterPage() {
       console.log(imageUrl);
       if (!imageUrl) return;
       if (!auth) throw new Error("Auth unavailable");
-      await auth.register(name, email, password, imageUrl);
+      await auth.register(data.name, data.email, data.password, imageUrl);
       router.push("/my-library");
     } catch (err) {
       showError(
@@ -75,7 +111,7 @@ export default function RegisterPage() {
           </div>
 
           {/* Form section */}
-          <form onSubmit={handleSubmit} className="p-8">
+          <form onSubmit={handleSubmit(onSubmit)} className="p-8">
             <div className="space-y-6">
               {/* Name input */}
               <div>
@@ -87,13 +123,18 @@ export default function RegisterPage() {
                     <User className="h-5 w-5 text-gray-400" />
                   </div>
                   <input
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
-                    required
-                    className="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-transparent transition-all duration-200 bg-gray-50 focus:bg-white"
+                    {...register("name")}
+                    className={`block w-full pl-10 pr-3 py-3 border rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-transparent transition-all duration-200 bg-gray-50 focus:bg-white ${
+                      errors.name ? "border-red-500" : "border-gray-300"
+                    }`}
                     placeholder="John Doe"
                   />
                 </div>
+                {errors.name && (
+                  <p className="mt-1 text-sm text-red-600">
+                    {errors.name.message}
+                  </p>
+                )}
               </div>
 
               {/* Email input */}
@@ -107,13 +148,18 @@ export default function RegisterPage() {
                   </div>
                   <input
                     type="email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    required
-                    className="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-transparent transition-all duration-200 bg-gray-50 focus:bg-white"
+                    {...register("email")}
+                    className={`block w-full pl-10 pr-3 py-3 border rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-transparent transition-all duration-200 bg-gray-50 focus:bg-white ${
+                      errors.email ? "border-red-500" : "border-gray-300"
+                    }`}
                     placeholder="your@email.com"
                   />
                 </div>
+                {errors.email && (
+                  <p className="mt-1 text-sm text-red-600">
+                    {errors.email.message}
+                  </p>
+                )}
               </div>
 
               {/* Password input */}
@@ -127,10 +173,10 @@ export default function RegisterPage() {
                   </div>
                   <input
                     type={showPassword ? "text" : "password"}
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    required
-                    className="block w-full pl-10 pr-12 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-transparent transition-all duration-200 bg-gray-50 focus:bg-white"
+                    {...register("password")}
+                    className={`block w-full pl-10 pr-12 py-3 border rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-transparent transition-all duration-200 bg-gray-50 focus:bg-white ${
+                      errors.password ? "border-red-500" : "border-gray-300"
+                    }`}
                     placeholder="Enter your password"
                   />
                   <button
@@ -145,6 +191,11 @@ export default function RegisterPage() {
                     )}
                   </button>
                 </div>
+                {errors.password && (
+                  <p className="mt-1 text-sm text-red-600">
+                    {errors.password.message}
+                  </p>
+                )}
               </div>
 
               {/* Photo input */}
