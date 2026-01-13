@@ -3,15 +3,8 @@ import React, { useState, useContext } from "react";
 import { useRouter } from "next/navigation";
 import { AuthContext } from "../context/AuthContext";
 import { BookOpen, Mail, Lock, Eye, EyeOff, User, Camera } from "lucide-react";
-
-async function fileToDataUrl(file: File): Promise<string> {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.onload = () => resolve(reader.result as string);
-    reader.onerror = (err) => reject(err);
-    reader.readAsDataURL(file);
-  });
-}
+import { useImageUpload } from "../hook/useImageUpload";
+import { showError } from "../lib/sweetalert";
 
 export default function RegisterPage() {
   const auth = useContext(AuthContext);
@@ -22,23 +15,27 @@ export default function RegisterPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [photoFile, setPhotoFile] = useState<File | null>(null);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
   const router = useRouter();
+  const { uploadImage } = useImageUpload();
 
+  // register function
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setError(null);
     setLoading(true);
     try {
+      if (!photoFile)
+        return showError("Image Required", "Please select a profile photo");
+      const imageUrl = await uploadImage(photoFile);
+      console.log(imageUrl);
+      if (!imageUrl) return;
       if (!auth) throw new Error("Auth unavailable");
-      let photo = "";
-      if (photoFile) {
-        photo = await fileToDataUrl(photoFile);
-      }
-      await auth.register(name, email, password, photo);
+      await auth.register(name, email, password, imageUrl);
       router.push("/my-library");
     } catch (err) {
-      setError((err as Error).message || "Registration failed");
+      showError(
+        "Registration Failed",
+        (err as Error).message || "An error occurred during registration"
+      );
     } finally {
       setLoading(false);
     }
@@ -170,24 +167,6 @@ export default function RegisterPage() {
                   />
                 </div>
               </div>
-
-              {/* Error message */}
-              {error && (
-                <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg flex items-start">
-                  <svg
-                    className="w-5 h-5 mr-2 flex-shrink-0 mt-0.5"
-                    fill="currentColor"
-                    viewBox="0 0 20 20"
-                  >
-                    <path
-                      fillRule="evenodd"
-                      d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
-                      clipRule="evenodd"
-                    />
-                  </svg>
-                  <span>{error}</span>
-                </div>
-              )}
 
               {/* Submit button */}
               <button

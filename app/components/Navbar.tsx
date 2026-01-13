@@ -6,10 +6,12 @@ import { AuthContext } from "../context/AuthContext";
 
 export default function Navbar() {
   const auth = useContext(AuthContext);
+  if (!auth) throw new Error("AuthContext missing");
+  const { logout, user } = auth;
   const [isOpen, setIsOpen] = useState(false);
 
   const handleLogout = () => {
-    auth?.logout();
+    logout();
     setIsOpen(false);
   };
 
@@ -35,7 +37,7 @@ export default function Navbar() {
             >
               Home
             </Link>
-            {auth?.user ? (
+            {user ? (
               <>
                 <Link
                   href="/my-library"
@@ -46,11 +48,11 @@ export default function Navbar() {
                 <div className="flex items-center space-x-4">
                   <div className="flex items-center space-x-2 text-white">
                     <User className="w-4 h-4" />
-                    <span className="font-medium">{auth.user.name}</span>
+                    <span className="font-medium">{user.name}</span>
                   </div>
                   <button
                     onClick={handleLogout}
-                    className="flex items-center space-x-2 text-white hover:text-amber-100 transition-colors font-medium"
+                    className="flex cursor-pointer items-center space-x-2 text-white hover:text-amber-100 transition-colors font-medium"
                   >
                     <LogOut className="w-4 h-4" />
                     <span>Logout</span>
@@ -101,7 +103,7 @@ export default function Navbar() {
               >
                 Home
               </Link>
-              {auth?.user ? (
+              {user ? (
                 <>
                   <Link
                     href="/my-library"
@@ -113,7 +115,7 @@ export default function Navbar() {
                   <div className="px-3 py-2 text-white font-medium">
                     <div className="flex items-center space-x-2">
                       <User className="w-4 h-4" />
-                      <span>{auth.user.name}</span>
+                      <span>{user.name}</span>
                     </div>
                   </div>
                   <button
