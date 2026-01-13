@@ -46,7 +46,7 @@ export default function LoginPage() {
       await auth.login(data.email, data.password);
       // Redirect based on user role
       if (auth.user?.role === "admin") {
-        router.push("/admin/dashboard");
+        router.push("/dashboard");
       } else {
         router.push("/my-library");
       }

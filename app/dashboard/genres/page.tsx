@@ -3,6 +3,7 @@ import ProtectedRoute from "@/app/components/ProtectedRoute";
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import api from "../../lib/axios";
+import Swal from "sweetalert2";
 import {
   BookOpen,
   Users,
@@ -62,12 +63,24 @@ export default function ManageGenresPage() {
   };
 
   const deleteGenre = async (id: string) => {
-    if (confirm("Are you sure you want to delete this genre?")) {
+    const result = await Swal.fire({
+      title: "Are you sure?",
+      text: "You won't be able to revert this!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#d33",
+      cancelButtonColor: "#3085d6",
+      confirmButtonText: "Yes, delete it!",
+    });
+
+    if (result.isConfirmed) {
       try {
         await api.delete(`/admin/genres/${id}`);
+        Swal.fire("Deleted!", "The genre has been deleted.", "success");
         fetchGenres();
       } catch (error) {
         console.error("Error deleting genre:", error);
+        Swal.fire("Error!", "Failed to delete the genre.", "error");
       }
     }
   };

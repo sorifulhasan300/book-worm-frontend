@@ -1,21 +1,9 @@
 "use client";
 import ProtectedRoute from "@/app/components/ProtectedRoute";
 import React, { useState, useEffect } from "react";
-import Link from "next/link";
 import api from "../../lib/axios";
-import {
-  BookOpen,
-  Users,
-  MessageSquare,
-  BarChart3,
-  Settings,
-  LayoutDashboard,
-  LogOut,
-  Edit,
-  UserCheck,
-  UserX,
-  Crown,
-} from "lucide-react";
+import { UserCheck, UserX, Crown } from "lucide-react";
+import Swal from "sweetalert2";
 
 interface User {
   _id: string;
@@ -45,11 +33,25 @@ export default function ManageUsersPage() {
   };
 
   const changeUserRole = async (userId: string, newRole: string) => {
-    try {
-      await api.put(`/admin/users/${userId}`, { role: newRole });
-      fetchUsers();
-    } catch (error) {
-      console.error("Error changing user role:", error);
+    const result = await Swal.fire({
+      title: "Change User Role",
+      text: `Are you sure you want to change this user's role to ${newRole}?`,
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#d33",
+      cancelButtonColor: "#3085d6",
+      confirmButtonText: "Yes, change it!",
+    });
+
+    if (result.isConfirmed) {
+      try {
+        await api.put(`/admin/user/${userId}`, { role: newRole });
+        Swal.fire("Success!", "User role has been updated.", "success");
+        fetchUsers();
+      } catch (error) {
+        console.error("Error changing user role:", error);
+        Swal.fire("Error!", "Failed to update user role.", "error");
+      }
     }
   };
 
@@ -75,7 +77,7 @@ export default function ManageUsersPage() {
 
   return (
     <ProtectedRoute requiredRole="admin">
-      <div className="min-h-screen bg-gradient-to-br from-amber-50 via-orange-50 to-yellow-50 p-8">
+      <div className="min-h-screen  p-8">
         <div className="max-w-7xl mx-auto">
           <h1 className="text-4xl font-bold text-gray-800 mb-8">
             Manage Users
@@ -155,7 +157,6 @@ export default function ManageUsersPage() {
                             className="border border-gray-300 rounded px-2 py-1 text-sm focus:ring-2 focus:ring-amber-500 focus:border-transparent"
                           >
                             <option value="user">User</option>
-                            <option value="moderator">Moderator</option>
                             <option value="admin">Admin</option>
                           </select>
                         </td>
