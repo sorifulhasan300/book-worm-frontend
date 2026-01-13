@@ -4,11 +4,36 @@ import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import api from "../lib/axios";
 import { BookOpen, Users, MessageSquare, LogOut } from "lucide-react";
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  Title,
+  Tooltip,
+  Legend,
+} from "chart.js";
+import { Bar } from "react-chartjs-2";
+
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  Title,
+  Tooltip,
+  Legend
+);
 
 interface Stats {
   totalBooks: number;
   totalUsers: number;
   pendingReviews: number;
+}
+
+interface Book {
+  _id: string;
+  title: string;
+  genre: string | { _id: string; name: string; __v: number };
 }
 
 export default function AdminDashboardPage() {
@@ -18,6 +43,7 @@ export default function AdminDashboardPage() {
     pendingReviews: 0,
   });
   const [loading, setLoading] = useState(true);
+  const [genreData, setGenreData] = useState<{ name: string; count: number }[]>([]);
 
   useEffect(() => {
     fetchStats();
@@ -25,16 +51,35 @@ export default function AdminDashboardPage() {
 
   const fetchStats = async () => {
     try {
-      const [booksRes, usersRes, reviewsRes] = await Promise.all([
-        api.get("/dashboard/books"),
-        api.get("/dashboard/users"),
+      const [booksRes, usersRes, reviewsRes, genresRes] = await Promise.all([
+        api.get("/admin/books"),
+        api.get("/admin/users"),
         api.get("/dashboard/reviews?status=pending"),
+        api.get("/admin/genres"),
       ]);
+
       setStats({
         totalBooks: booksRes.data.length,
         totalUsers: usersRes.data.length,
         pendingReviews: reviewsRes.data.length,
       });
+
+      // Process genre data for chart
+      const genreCount: { [key: string]: number } = {};
+      booksRes.data.forEach((book: Book) => {
+        const genreName =
+          typeof book.genre === "string" ? book.genre : book.genre?.name;
+        if (genreName) {
+          genreCount[genreName] = (genreCount[genreName] || 0) + 1;
+        }
+      });
+
+      const chartData = Object.entries(genreCount).map(([name, count]) => ({
+        name,
+        count,
+      }));
+
+      setGenreData(chartData);
     } catch (error) {
       console.error("Error fetching stats:", error);
     } finally {
@@ -94,9 +139,59 @@ export default function AdminDashboardPage() {
                 </div>
               ))}
             </div>
+
+            {/* Books per Genre Chart */}
+            <div className="bg-white rounded-xl shadow-lg p-6">
+              <h2 className="text-xl font-bold text-gray-800 mb-4">
+                Books per Genre
+              </h2>
+              {loading ? (
+                <div className="h-64 flex items-center justify-center">
+                  <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-amber-600"></div>
+                </div>
+              ) : (
+                <div className="h-64">
+                  <Bar
+                    data={{
+                      labels: genreData.map((item) => item.name),
+                      datasets: [
+                        {
+                          label: "Number of Books",
+                          data: genreData.map((item) => item.count),
+                          backgroundColor: "rgba(245, 158, 11, 0.6)",
+                          borderColor: "rgba(245, 158, 11, 1)",
+                          borderWidth: 1,
+                        },
+                      ],
+                    }}
+                    options={{
+                      responsive: true,
+                      maintainAspectRatio: false,
+                      plugins: {
+                        legend: {
+                          position: "top" as const,
+                        },
+                        title: {
+                          display: false,
+                        },
+                      },
+                      scales: {
+                        y: {
+                          beginAtZero: true,
+                          ticks: {
+                            stepSize: 1,
+                          },
+                        },
+                      },
+                    }}
+                  />
+                </div>
+              )}
+            </div>
           </div>
         </div>
       </div>
     </ProtectedRoute>
   );
 }
+

@@ -79,7 +79,7 @@ export default function BrowseBooksPage() {
       console.log(response.data);
       const transformedBooks = response.data.map((book: RawBook) => {
         const genre =
-          typeof book.genre === "string" ? book.genre : book.genre.name;
+          typeof book.genre === "string" ? book.genre : book.genre?.name;
         return {
           id: book._id,
           title: book.title,
@@ -262,11 +262,6 @@ export default function BrowseBooksPage() {
             >
               View Details
             </Link>
-            {auth?.user && (
-              <button className="bg-gray-100 text-gray-700 py-2 px-4 rounded-lg hover:bg-gray-200 transition-colors">
-                Add to Shelf
-              </button>
-            )}
           </div>
         </div>
       </div>
