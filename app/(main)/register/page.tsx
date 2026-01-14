@@ -58,12 +58,6 @@ export default function RegisterPage() {
   const onSubmit = async (data: RegisterFormData) => {
     setLoading(true);
     try {
-      // if (!photoFile)
-      //   return showError("Image Required", "Please select a profile photo");
-      // const imageUrl = await uploadImage(photoFile);
-      // console.log(imageUrl);
-      // if (!imageUrl) return;
-      // if (!auth) throw new Error("Auth unavailable");
       await auth?.register(data.name, data.email, data.password, "");
       router.push("/my-library");
     } catch (err) {

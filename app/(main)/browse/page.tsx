@@ -76,7 +76,6 @@ export default function BrowseBooksPage() {
     try {
       setLoading(true);
       const response = await api.get("/admin/books");
-      console.log(response.data);
       const transformedBooks = response.data.map((book: RawBook) => {
         const genre =
           typeof book.genre === "string" ? book.genre : book.genre?.name;

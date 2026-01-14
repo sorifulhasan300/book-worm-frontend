@@ -82,7 +82,6 @@ export default function BookDetailsPage() {
       fetchReviews();
     }
   }, [id]);
-  console.log(book);
   const fetchBookDetails = async () => {
     try {
       setLoading(true);
@@ -152,7 +151,6 @@ export default function BookDetailsPage() {
 
   const addToShelf = async (shelf: string) => {
     if (!auth?.user) return;
-    console.log(shelf);
     try {
       const shelfMapping: { [key: string]: string } = {
         "Want to Read": "want",
