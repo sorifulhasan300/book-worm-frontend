@@ -27,7 +27,7 @@ export default function ProtectedRoute({
     if (requiredRole && auth.user.role !== requiredRole) {
       // Not authorized, redirect based on role
       if (auth.user.role === "admin") {
-        router.push("/admin/dashboard");
+        router.push("/dashboard");
       } else {
         router.push("/my-library");
       }

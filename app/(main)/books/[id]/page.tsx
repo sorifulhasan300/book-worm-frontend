@@ -20,6 +20,7 @@ import {
 import { AuthContext } from "@/app/context/AuthContext";
 import api from "@/app/lib/axios";
 import { showError } from "@/app/lib/sweetalert";
+import { AxiosError } from "axios";
 interface Book {
   id: string;
   title: string;
@@ -81,14 +82,14 @@ export default function BookDetailsPage() {
       fetchReviews();
     }
   }, [id]);
-
+  console.log(book);
   const fetchBookDetails = async () => {
     try {
       setLoading(true);
       const response = await api.get(`/admin/books/${id}`);
       const rawBook: RawBook = response.data;
       const genre =
-        typeof rawBook.genre === "string" ? rawBook.genre : rawBook.genre.name;
+        typeof rawBook.genre === "string" ? rawBook.genre : rawBook.genre?.name;
       const transformedBook: Book = {
         id: rawBook._id,
         title: rawBook.title,
@@ -115,11 +116,13 @@ export default function BookDetailsPage() {
     try {
       const response = await api.get(`/review/${id}`);
       setReviews(response.data);
-    } catch (error: any) {
+    } catch (error) {
+      const axiosError = error as AxiosError;
+      const message = (axiosError.response?.data as { message?: string })
+        ?.message;
       showError(
-        "Review Submitting Failed",
-        (error as Error).response?.data?.message ||
-          "Something went wrong while submitting your review"
+        "Review Fetching Failed",
+        message || "Something went wrong while fetching reviews"
       );
     }
   };
@@ -136,23 +139,37 @@ export default function BookDetailsPage() {
       setNewReview({ rating: 5, review: "" });
       setShowReviewForm(false);
       fetchReviews();
-    } catch (error: any) {
+    } catch (error) {
+      const axiosError = error as AxiosError;
+      const message = (axiosError.response?.data as { message?: string })
+        ?.message;
       showError(
         "Review Submitting Failed",
-        error.response?.data?.message ||
-          "Something went wrong while submitting your review"
+        message || "Something went wrong while submitting your review"
       );
     }
   };
 
   const addToShelf = async (shelf: string) => {
     if (!auth?.user) return;
+    console.log(shelf);
     try {
-      // Assuming there's an API for adding to shelf
-      await api.post("/user/shelf", { bookId: id, shelf });
+      const shelfMapping: { [key: string]: string } = {
+        "Want to Read": "want",
+        "Currently Reading": "reading",
+        Read: "read",
+      };
+      const backendShelf = shelfMapping[shelf] || shelf;
+      const progress = shelf === "Read" ? book?.pages || 100 : 0;
+      await api.post("/self", { bookId: id, shelf: backendShelf, progress });
       alert(`Added to ${shelf}`);
+      setShowShelfDropdown(false);
     } catch (err) {
       console.error("Error adding to shelf:", err);
+      showError(
+        "Add to Shelf Failed",
+        "Something went wrong while adding the book to your shelf"
+      );
     }
   };
 
