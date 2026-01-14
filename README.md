@@ -1,36 +1,70 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# BookWorm Frontend
 
-## Getting Started
+![BookWorm Logo](https://user-images.githubusercontent.com/your-username/logo.png)  
 
-First, run the development server:
+A **personalized book recommendation & reading tracker application** frontend built with **Next.js**, **React**, and **Tailwind CSS**. This app allows users to discover books, track their reading progress, write reviews, and get personalized recommendations.
 
+---
+
+## 🌐 Live Demo
+
+[BookWorm Frontend Live](https://book-worm-frontend-omega.vercel.app/)
+
+---
+
+## 📂 Repositories
+
+- **Frontend:** [GitHub Repo](https://github.com/sorifulhasan300/book-worm-frontend)  
+- **Backend:** [GitHub Repo](https://github.com/sorifulhasan300/book-worm)
+
+---
+
+## 👤 User Roles & Credentials
+
+### Normal User
+- **Email:** soriful100@gmail.com  
+- **Password:** aA123#
+
+### Admin
+- **Email:** soriful@12hasan  
+- **Password:** dfadf124
+
+> Login with these credentials to access different dashboards and features.
+
+---
+
+## 🚀 Features
+
+### User
+- Browse books with search, filters, and pagination
+- Add books to shelves: **Want to Read**, **Currently Reading**, **Read**
+- Track reading progress
+- Write and view book reviews
+- Personalized book recommendations carousel
+- Tutorial page with embedded YouTube videos
+- Fully responsive on mobile, tablet, and desktop
+
+### Admin
+- Manage books: add, edit, delete
+- Manage genres/categories
+- Approve or delete user reviews
+- Manage tutorials (YouTube links)
+- Dashboard overview with stats and charts
+
+---
+
+## 🛠 Tech Stack
+
+- **Frontend:** Next.js (App Router), React, Tailwind CSS  
+- **State Management:** React Context API  
+- **UI Enhancements:** DaisyUI, Framer Motion (optional)  
+- **Backend:** Node.js, Express, MongoDB (hosted separately)  
+- **Deployment:** Vercel  
+
+---
+
+## 📌 Installation (Local Development)
+
+1. Clone the repository:
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
-
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
-
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
-
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+git clone https://github.com/sorifulhasan300/book-worm-frontend.git
