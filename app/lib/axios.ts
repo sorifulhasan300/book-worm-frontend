@@ -1,15 +1,13 @@
 import axios from "axios";
 
 const api = axios.create({
-  baseURL: process.env.BASE_URL,
+  baseURL: process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:5000/api",
 });
-
 api.interceptors.request.use((config) => {
   const token = document.cookie
     .split("; ")
     .find((row) => row.startsWith("token="))
     ?.split("=")[1];
-
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
   }
